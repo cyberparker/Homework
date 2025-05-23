@@ -9,7 +9,8 @@ public class Task1 {
         System.out.println("Banana");
         System.out.println("Apple");
     }
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         printThreeWords();
 
     }
