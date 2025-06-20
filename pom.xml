@@ -12,6 +12,96 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.10.0</junit.version>
+        <testng.version>7.8.0</testng.version>
+        <surefire.version>3.1.2</surefire.version>
     </properties>
 
+    <profiles>
+        <!-- Профиль JUnit 5 (по умолчанию) -->
+        <profile>
+            <id>junit</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <version>${junit.version}</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>${surefire.version}</version>
+                        <configuration>
+                            <includes>
+                                <include>**/junit5_test/**/*Test.java</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- Профиль TestNG -->
+        <profile>
+            <id>testng</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.testng</groupId>
+                    <artifactId>testng</artifactId>
+                    <version>${testng.version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <!-- Отключение JUnit для этого профиля -->
+                <dependency>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                    <version>${junit.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <!-- RestAssured -->
+                <dependency>
+                    <groupId>io.rest-assured</groupId>
+                    <artifactId>rest-assured</artifactId>
+                    <version>5.3.1</version>
+                    <scope>test</scope>
+                </dependency>
+            </dependencies>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0-M7</version>
+                        <configuration>
+                            <!-- Это для того, чтобы reflective access не вылазил -->
+                            <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                            <excludes>
+                                <exclude>**/junit5_test/**/*</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+            </plugin>
+        </plugins>
+    </build>
 </project>
